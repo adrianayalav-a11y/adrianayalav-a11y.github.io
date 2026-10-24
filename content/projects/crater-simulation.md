@@ -1,6 +1,6 @@
 # Impact-Crater Saturation Simulation
 
-**ASTR 3750 final project, Prof. Paul Hayne, December 2024 · Solo project · Python / Jupyter**
+**ASTR 3750 final project, Prof. Paul Hayne, Dec 2024 · Solo project · Python / Jupyter**
 **v2 rebuild: October 2026**
 
 ## What it is

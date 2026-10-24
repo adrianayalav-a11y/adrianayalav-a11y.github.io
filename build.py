@@ -1,7 +1,7 @@
 """Builds the HTML pages from content/*.md. Run: python3 build.py  (needs: pip install markdown)"""
 import markdown, pathlib, re
 ROOT = pathlib.Path(__file__).parent
-NAV = [("Home","index.html"),("Projects","projects/index.html"),("Contact","contact.html")]
+NAV = [("Home","index.html"),("About","about.html"),("Projects","projects/index.html"),("Contact","contact.html")]
 
 def page(title, body, depth):
     up = "../" * depth
@@ -13,7 +13,7 @@ def page(title, body, depth):
 <link rel="stylesheet" href="{up}assets/css/style.css"></head>
 <body><header><a class="brand" href="{up}index.html">Adrian Ayala</a><nav>{nav}</nav></header>
 <main>{body}</main>
-<footer>&copy; 2026 Adrian Ayala &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
+<footer>&copy; 2026 Adrian Ayala &middot; <a href="https://github.com/adrianayalav-a11y">GitHub</a> &middot; <a href="https://www.linkedin.com/in/adrian-ayala-32077923b">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
 </body></html>"""
 
 for md in sorted((ROOT/"content").rglob("*.md")):

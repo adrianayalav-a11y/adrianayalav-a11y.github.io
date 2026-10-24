@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flux-to-Albedo Model | Adrian Ayala</title>
+<link rel="stylesheet" href="../assets/css/style.css"></head>
+<body><header><a class="brand" href="../index.html">Adrian Ayala</a><nav><a href="../index.html">Home</a><a href="../about.html">About</a><a href="../projects/index.html">Projects</a><a href="../contact.html">Contact</a></nav></header>
+<main><h1>Flux-to-Albedo Model</h1>
+<p><strong>ASTR 3510, Fall 2025 · Team project with Kayla Gill and Maya Nussbaumer</strong></p>
+<h2>What it is</h2>
+<p>How bright an object looks depends on its size, its distance and how reflective its surface is. Reflectivity (geometric albedo) is a clue to what a surface is made of. We built a pipeline that turns telescope images into an albedo estimate.</p>
+<h2>Method</h2>
+<ol>
+<li><strong>Calibration:</strong> dark, bias and flat-field corrections on the raw images.</li>
+<li><strong>Aperture photometry:</strong> measure the flux of each target.</li>
+<li><strong>Flux ratio to the Sun:</strong> compare the measured flux to the sunlight hitting the object.</li>
+<li><strong>Geometric albedo:</strong> convert that ratio into an albedo.</li>
+</ol>
+<h2>Icy moons and the mystery object</h2>
+<p>We used icy moons with known albedos to calibrate and check the pipeline. The goal was to characterize a mystery object from its measured flux.</p>
+<h2>Results</h2>
+<ul>
+<li>Our model classified the mystery object, asteroid 16 Psyche, as rocky. Its real albedo is about 0.15 and it is more metallic than rocky, which showed the limits of a model with only three categories and a small training set.</li>
+<li>We also found no strong correlation between measured flux and geometric albedo.</li>
+</ul>
+<h2>Materials</h2>
+<ul>
+<li><a href="../assets/docs/albedo_poster_final.pdf">Final poster (PDF, Dec 2025)</a></li>
+</ul>
+<p>Co-authored with Kayla Gill and Maya Nussbaumer.</p></main>
+<footer>&copy; 2026 Adrian Ayala &middot; <a href="https://github.com/adrianayalav-a11y">GitHub</a> &middot; <a href="https://www.linkedin.com/in/adrian-ayala-32077923b">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
+</body></html>

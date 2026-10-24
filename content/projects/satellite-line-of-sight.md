@@ -8,9 +8,11 @@ The project's goal was to send polarized light for a quantum communication link 
 
 ## My role
 
-I owned the first stage, the geometry. My Python code puts the satellite and the ground station in the same Earth-fixed (ECEF) coordinate frame, traces the line of sight between them, and computes the angles (elevation, azimuth, polarization rotation) that feed the polarization-control stage. I derived the geometry by hand over winter break. I was also the team's liaison with the sponsor and kept records of all team meetings.
+I owned the first stage, the geometry. My Python code puts the satellite and the ground station in the same Earth-fixed (ECEF) coordinate frame, traces the line of sight between them, and computes the angles (elevation, azimuth, polarization rotation) that feed the polarization-control stage. I derived the geometry by hand over winter break and wrote all four geometry notebooks. I was also the team's liaison with the sponsor and kept records of all team meetings.
 
-The quantum and optics side was led by my teammates Ashley Tams, Alexander Pavlovic, Braden Yonano and Lucas Rossi. Lucas Rossi was the planned co-owner of the elevation/azimuth task.
+Lucas Rossi gave a small assist on the geometry code.
+
+The overall senior design team was Adrian Ayala, Ashley Tams, Alexander Pavlovic, Braden Yonano and Lucas Rossi; the rest of the team led the quantum optics, Stokes/Mueller polarization modeling, Monte Carlo simulation and waveplate control.
 
 ## Method (my four notebooks)
 
@@ -23,7 +25,7 @@ The quantum and optics side was led by my teammates Ashley Tams, Alexander Pavlo
 
 ## Results
 
-- **Team result:** simulations met the performance target. Lab tests did much worse, because of measurement error, low-precision waveplate labels and manual operation of the polarization control device.
+- **Team result:** simulations met the ~1e-9 tolerance target. Lab tests did much worse, because of measurement error, low-precision waveplate labels and manual operation of the polarization control device.
 - **Expo:** presented at the CU Senior Engineering Expo to 100+ people.
 - **ISS passes:** with a current ISS orbit, my code finds four passes over Boulder in 600 minutes; the highest reaches 45.15° elevation.
 - **Example angle:** the parallactic angle for one example point is q = 65.54°.
