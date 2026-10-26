@@ -3,6 +3,8 @@
 **ASTR 3750 final project, Prof. Paul Hayne, Dec 2024 · Solo project · Python / Jupyter**
 **v2 rebuild: October 2026**
 
+**[Try the interactive demo →](crater-demo.html)**
+
 ## What it is
 
 A planet's surface keeps getting hit. Eventually it is so covered in craters that new ones just erase old ones, and the number of craters you can see stops growing. This is called *saturation*. I simulated a 500 km × 500 km surface getting hit over time to see how fast it saturates.

@@ -19,3 +19,6 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:2rem}
 .card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1)}
 .card img{width:100%;aspect-ratio:4/3;object-fit:contain;border:0;border-radius:0;border-bottom:1px solid var(--line)}
 .card span{padding:.7rem .9rem;font-weight:600}
+/* Crater demo: square canvas that shrinks on phones */
+.demo canvas{width:100%;max-width:500px;aspect-ratio:1;display:block;border:1px solid var(--line);border-radius:6px;background:#000;cursor:crosshair}
+.demo input[type=number]{width:6rem}.demo .note{color:var(--muted);font-size:.9rem}
