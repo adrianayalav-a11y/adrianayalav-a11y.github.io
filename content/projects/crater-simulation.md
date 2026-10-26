@@ -52,7 +52,3 @@ All three runs stopped because the visible-crater count leveled off, before reac
 
 ![Final crater maps](../assets/img/crater/final_maps.png)
 *Final maps: airless, with erosion, and with an atmosphere cutoff (v2).*
-
-## Code
-
-On GitHub: [github.com/adrianayalav-a11y](https://github.com/adrianayalav-a11y)

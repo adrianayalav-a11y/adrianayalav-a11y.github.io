@@ -1,6 +1,6 @@
 # Flux-to-Albedo Model
 
-**ASTR 3510, Fall 2025 · Team project with Kayla Gill and Maya Nussbaumer**
+**ASTR 3510, Fall 2025 · 3-person team project**
 
 ## What it is
 
@@ -25,5 +25,3 @@ We used icy moons with known albedos to calibrate and check the pipeline. The go
 ## Materials
 
 - [Final poster (PDF, Dec 2025)](../assets/docs/albedo_poster_final.pdf)
-
-Co-authored with Kayla Gill and Maya Nussbaumer.

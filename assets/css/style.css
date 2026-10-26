@@ -13,3 +13,9 @@ table{border-collapse:collapse;width:100%;font-size:.95rem}th,td{border:1px soli
 code{background:#eef0f5;padding:.1rem .3rem;border-radius:4px}
 blockquote{margin:1rem 0;padding:.6rem 1rem;border-left:4px solid #e0a800;background:#fff8e1;color:#5a4500}
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:2rem}
+/* Project cards on the home page: image + title, whole card is a link. Auto-fit grid = responsive. */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;text-decoration:none;color:var(--fg);transition:box-shadow .15s}
+.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.card img{width:100%;aspect-ratio:4/3;object-fit:contain;border:0;border-radius:0;border-bottom:1px solid var(--line)}
+.card span{padding:.7rem .9rem;font-weight:600}

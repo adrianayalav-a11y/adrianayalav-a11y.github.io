@@ -22,7 +22,7 @@
 
 ## Experience
 
-- **Industry-sponsored senior design project** (Fall 2025 – Spring 2026): satellite-to-ground line-of-sight geometry code, client liaison and meeting recorder. [See the project →](projects/satellite-line-of-sight.html)
+- **Senior design project** (Fall 2025 – Spring 2026): satellite-to-ground line-of-sight and polarization-angle geometry code (Earth-fixed/ECEF frame), client liaison and meeting recorder. [See the project →](projects/satellite-line-of-sight.html)
 - **Student Employee, CU Dining & Housing** (Sep – Dec 2022)
 
 ## Skills
@@ -38,6 +38,5 @@
 
 ## Contact
 
-- Email: [adrianayala.v@gmail.com](mailto:adrianayala.v@gmail.com)
-- GitHub: [github.com/adrianayalav-a11y](https://github.com/adrianayalav-a11y)
 - LinkedIn: [linkedin.com/in/adrian-ayala-32077923b](https://www.linkedin.com/in/adrian-ayala-32077923b)
+- Email: [adrianayala.v@gmail.com](mailto:adrianayala.v@gmail.com)
