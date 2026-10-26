@@ -8,7 +8,7 @@ The project's goal was to send polarized light for a quantum communication link 
 
 ## My role
 
-I owned the first stage, the geometry. My Python code puts the satellite and the ground station in the same Earth-fixed (ECEF) coordinate frame, traces the line of sight between them, and computes the angles (elevation, azimuth, polarization rotation) that feed the polarization-control stage. I derived the geometry by hand over winter break and wrote all four geometry notebooks. I was also the team's liaison with the sponsor and kept records of all team meetings.
+I owned the first stage, the geometry. My Python code puts the satellite and the ground station in the same Earth-fixed (ECEF) coordinate frame, traces the line of sight between them, and computes the angles (elevation, azimuth, and parallactic / polarization-angle geometry) that feed the polarization-control stage. I derived the geometry by hand over winter break and wrote all four geometry notebooks. I was also the team's liaison with the sponsor and kept records of all team meetings.
 
 The rest of the team led the quantum optics, Stokes/Mueller polarization modeling, Monte Carlo simulation and waveplate control.
 
@@ -19,7 +19,7 @@ The rest of the team led the quantum optics, Stokes/Mueller polarization modelin
 | `Altitude_Azimuth_angles` | Takes a satellite's orbit (TLE), propagates it with SGP4, converts it to ECEF, and computes elevation, azimuth and the line-of-sight vector from Boulder, CO |
 | `ThetaAngleCalculation` | Plots the orbit on a 3D globe and computes the elevation θ from Boulder, with a below-horizon check |
 | `Parallactic_angle` | Computes the parallactic angle q (how far the polarization frame rotates) for any azimuth/elevation |
-| `Static_ECEFto_theta_psi` | Turns satellite and ground ECEF positions into elevation θ and polarization rotation ψ (WGS-84; ψ following Li et al. 2013) |
+| `Static_ECEFto_theta_psi` | Turns satellite and ground ECEF positions into elevation θ and an angle ψ for the parallactic / polarization-angle geometry (WGS-84) |
 
 ## Results
 

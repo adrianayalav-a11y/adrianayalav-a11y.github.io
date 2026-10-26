@@ -9,7 +9,7 @@
 <h2>What it is</h2>
 <p>The project's goal was to send polarized light for a quantum communication link between a satellite and a ground station. As the satellite moves across the sky, the polarization frame rotates relative to the ground, so the system has to correct for it. The team built a simulation of that correction.</p>
 <h2>My role</h2>
-<p>I owned the first stage, the geometry. My Python code puts the satellite and the ground station in the same Earth-fixed (ECEF) coordinate frame, traces the line of sight between them, and computes the angles (elevation, azimuth, polarization rotation) that feed the polarization-control stage. I derived the geometry by hand over winter break and wrote all four geometry notebooks. I was also the team's liaison with the sponsor and kept records of all team meetings.</p>
+<p>I owned the first stage, the geometry. My Python code puts the satellite and the ground station in the same Earth-fixed (ECEF) coordinate frame, traces the line of sight between them, and computes the angles (elevation, azimuth, and parallactic / polarization-angle geometry) that feed the polarization-control stage. I derived the geometry by hand over winter break and wrote all four geometry notebooks. I was also the team's liaison with the sponsor and kept records of all team meetings.</p>
 <p>The rest of the team led the quantum optics, Stokes/Mueller polarization modeling, Monte Carlo simulation and waveplate control.</p>
 <h2>Method (my four notebooks)</h2>
 <table>
@@ -34,7 +34,7 @@
 </tr>
 <tr>
 <td><code>Static_ECEFto_theta_psi</code></td>
-<td>Turns satellite and ground ECEF positions into elevation θ and polarization rotation ψ (WGS-84; ψ following Li et al. 2013)</td>
+<td>Turns satellite and ground ECEF positions into elevation θ and an angle ψ for the parallactic / polarization-angle geometry (WGS-84)</td>
 </tr>
 </tbody>
 </table>
