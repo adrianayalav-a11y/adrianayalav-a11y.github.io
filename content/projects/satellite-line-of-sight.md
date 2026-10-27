@@ -1,6 +1,8 @@
 # Satellite-to-Ground Line-of-Sight Geometry
 
-**Senior design project (team), Fall 2025 – Spring 2026 · Python**
+**Senior design project (team) for Xairos (industry sponsor), Fall 2025 – Spring 2026 · Python**
+
+**[Try the interactive demo →](los-demo.html)**
 
 ## What it is
 

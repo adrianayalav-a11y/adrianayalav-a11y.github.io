@@ -4,15 +4,15 @@
 <title>Impact-Crater Saturation Simulation | Adrian Ayala</title>
 <link rel="stylesheet" href="../assets/css/style.css"></head>
 <body><header><a class="brand" href="../index.html">Adrian Ayala</a><nav><a href="../index.html">Home</a><a href="../about.html">About</a><a href="../projects/index.html">Projects</a><a href="../contact.html">Contact</a></nav></header>
-<main><h1>Impact-Crater Saturation Simulation</h1>
+<main><section class="intro"><h1>Impact-Crater Saturation Simulation</h1>
 <p><strong>ASTR 3750 final project, Prof. Paul Hayne, Dec 2024 · Solo project · Python / Jupyter</strong><br />
 <strong>v2 rebuild: October 2026</strong></p>
 <p><strong><a href="crater-demo.html">Try the interactive demo →</a></strong></p>
-<h2>What it is</h2>
+</section><section class="block"><h2>What it is</h2>
 <p>A planet's surface keeps getting hit. Eventually it is so covered in craters that new ones just erase old ones, and the number of craters you can see stops growing. This is called <em>saturation</em>. I simulated a 500 km × 500 km surface getting hit over time to see how fast it saturates.</p>
-<h2>My role</h2>
+</section><section class="block"><h2>My role</h2>
 <p>I did all of it: the assumptions, the code and the report.</p>
-<h2>v1: the 2024 course project</h2>
+</section><section class="block"><h2>v1: the 2024 course project</h2>
 <ul>
 <li><strong>Impact rate:</strong> 1 impact per 1000 years for impactors larger than 10 km, plus about 100 smaller impactors per 1000-year step.</li>
 <li><strong>Sizes:</strong> smaller impactors (0.1–9.99 km) come from a power-law distribution (alpha = 2.5), so small ones are much more common than big ones.</li>
@@ -27,7 +27,7 @@
 <li>Adding small craters raised the visible-crater count; at high saturation, the visible count dropped.</li>
 <li>The power-law run aimed at 100% coverage never finished.</li>
 </ul>
-<h2>v2: the 2026 rebuild</h2>
+</section><section class="block"><h2>v2: the 2026 rebuild</h2>
 <p>Same physics as v1, plus:</p>
 <ul>
 <li><strong>Why 100% never arrives:</strong> each new crater mostly lands on already-cratered ground, so coverage creeps up like 1 − e^(−kN). The rebuilt run took about 2,400 steps to reach 99%.</li>
@@ -64,10 +64,10 @@
 </tbody>
 </table>
 <p>All three runs stopped because the visible-crater count leveled off, before reaching 99% coverage. The erosion settings are first estimates.</p>
-<h2>Figures</h2>
+</section><section class="block"><h2>Figures</h2>
 <p><img alt="Coverage and visible craters over time" src="../assets/img/crater/coverage_visible_vs_time.png" />
 <em>Coverage and visible crater count vs. time (v2).</em></p>
 <p><img alt="Final crater maps" src="../assets/img/crater/final_maps.png" />
-<em>Final maps: airless, with erosion, and with an atmosphere cutoff (v2).</em></p></main>
+<em>Final maps: airless, with erosion, and with an atmosphere cutoff (v2).</em></p></section></main>
 <footer>&copy; 2026 Adrian Ayala &middot; <a href="https://www.linkedin.com/in/adrian-ayala-32077923b">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
 </body></html>

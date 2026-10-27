@@ -1,24 +1,125 @@
-/* Simple, readable single stylesheet. Colors live in :root so they are easy to change. */
-:root{--bg:#fbfbfd;--fg:#1d1d24;--muted:#5b5b6b;--accent:#2b5fab;--card:#fff;--line:#e3e3ea}
+/* ==========================================================================
+   Adrian Ayala portfolio: one stylesheet, plain CSS.
+   Order: 1 colors & sizes, 2 base text, 3 header/footer, 4 page layout,
+   5 home hero, 6 project cards, 7 tables & figures, 8 crater demo, 9 motion.
+   ========================================================================== */
+
+/* 1. Colors and sizes live here, so changing the look means editing one place. */
+:root{
+  --bg:#FAFAF7;       /* warm off-white background */
+  --fg:#1A1A1A;       /* near-black body text (16.6:1 contrast) */
+  --muted:#6B6B6B;    /* captions and small print (5.1:1) */
+  --line:#E5E5E0;     /* thin dividers */
+  --accent:#C2410C;   /* rust orange: links, buttons, small highlights only (4.95:1) */
+  --card:#FFFFFF;     /* card and image backgrounds */
+  /* type scale: every font size on the site comes from this list */
+  --step0:1.0625rem;  /* body text, 17px */
+  --stepSmall:.875rem;
+  --step1:1.375rem;   /* lead sentence */
+  --step2:1.875rem;   /* section headings */
+  --step3:clamp(2.5rem,6vw,4.5rem); /* big page title, shrinks on phones */
+  --wide:1200px;      /* widest layout (hero, cards) */
+  --narrow:720px;     /* comfortable reading width for write-ups */
+  --space:clamp(3rem,8vw,6rem); /* vertical gap between sections */
+}
+
+/* 2. Base text. System fonts only, so the browser makes no outside font requests. */
 *{box-sizing:border-box}
-body{margin:0;font:17px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg)}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:1rem 2rem;border-bottom:1px solid var(--line);background:var(--card)}
-.brand{font-weight:700;font-size:1.2rem;color:var(--fg);text-decoration:none}
-nav a{margin-left:1.2rem;color:var(--muted);text-decoration:none}nav a:hover{color:var(--accent)}
-main{max-width:860px;margin:0 auto;padding:2rem 1.25rem}
-h1{line-height:1.2}h2{margin-top:2.2rem;border-bottom:1px solid var(--line);padding-bottom:.3rem}
-a{color:var(--accent)}
-img{max-width:100%;border:1px solid var(--line);border-radius:6px;background:#fff}
-table{border-collapse:collapse;width:100%;font-size:.95rem}th,td{border:1px solid var(--line);padding:.4rem .6rem;text-align:left}
-code{background:#eef0f5;padding:.1rem .3rem;border-radius:4px}
-blockquote{margin:1rem 0;padding:.6rem 1rem;border-left:4px solid #e0a800;background:#fff8e1;color:#5a4500}
-footer{text-align:center;color:var(--muted);font-size:.85rem;padding:2rem}
-/* Project cards on the home page: image + title, whole card is a link. Auto-fit grid = responsive. */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0}
-.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;text-decoration:none;color:var(--fg);transition:box-shadow .15s}
-.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1)}
-.card img{width:100%;aspect-ratio:4/3;object-fit:contain;border:0;border-radius:0;border-bottom:1px solid var(--line)}
-.card span{padding:.7rem .9rem;font-weight:600}
-/* Crater demo: square canvas that shrinks on phones */
-.demo canvas{width:100%;max-width:500px;aspect-ratio:1;display:block;border:1px solid var(--line);border-radius:6px;background:#000;cursor:crosshair}
-.demo input[type=number]{width:6rem}.demo .note{color:var(--muted);font-size:.9rem}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:var(--step0)/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3{line-height:1.1;letter-spacing:-.02em;font-weight:700}
+h1{font-size:var(--step3);margin:0 0 1.5rem}
+h2{font-size:var(--step2);margin:0 0 1.25rem}
+a{color:var(--accent);text-underline-offset:.2em}
+a:hover{text-decoration-thickness:2px}
+strong{font-weight:650}
+
+/* 3. Header and footer: quiet, thin divider lines. */
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem 1.5rem;
+  max-width:var(--wide);margin:0 auto;padding:1.25rem 1.5rem}
+.brand{font-weight:700;color:var(--fg);text-decoration:none;letter-spacing:-.01em}
+nav a{margin-left:1.5rem;color:var(--muted);text-decoration:none;font-size:var(--stepSmall)}
+nav a:first-child{margin-left:0}
+nav a:hover{color:var(--accent)}
+footer{max-width:var(--wide);margin:var(--space) auto 0;padding:2rem 1.5rem;border-top:1px solid var(--line);
+  color:var(--muted);font-size:var(--stepSmall);text-align:center}
+
+/* 4. Page layout: each <h2> part is its own <section> (build.py adds them).
+   Write-ups use the narrow reading width; big visuals may go wider. */
+main{padding:0 1.5rem}
+.intro,.block{max-width:var(--narrow);margin:0 auto}
+.intro{padding-top:var(--space)}
+.block{padding-top:var(--space)}
+.intro > p:first-of-type{color:var(--muted)}   /* the course / date line under a title */
+
+/* 5. Home hero: big title and sentence beside the crater map.
+   Two columns on wide screens, stacked (image first) on phones. */
+.hero{max-width:var(--wide);margin:0 auto;padding-top:var(--space);
+  display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.heroText > p:first-of-type{font-size:var(--step1);line-height:1.4;color:var(--fg)} /* the one-sentence summary */
+.heroText > p{color:var(--muted)}
+.heroImage{width:100%;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+@media (max-width:800px){
+  .hero{grid-template-columns:1fr}
+  .heroImage{order:-1}   /* show the picture first on phones */
+}
+/* The home sections hold the wide card grid, so let them use the wide width. */
+.hero ~ .block{max-width:var(--wide)}
+.hero ~ .block > p,.hero ~ .block > ul{max-width:var(--narrow)}
+
+/* 6. Project cards: big image, title underneath, whole card is one link. */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin:0 0 2rem}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;text-decoration:none;color:var(--fg);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.card img{width:100%;aspect-ratio:4/3;object-fit:contain;background:var(--card);border-bottom:1px solid var(--line)}
+.card span{padding:1.1rem 1.25rem;font-weight:650;font-size:1.05rem}
+.card span::after{content:" →";color:var(--accent)} /* small accent arrow */
+
+/* 7. Tables and figures in write-ups. Figures break out slightly wider than the text. */
+img{max-width:100%;height:auto}
+.block > p > img{display:block;width:min(100vw - 3rem,var(--wide));max-width:none;
+  margin:1rem 0 .5rem 50%;transform:translateX(-50%);   /* center a wider-than-text image */
+  border-radius:12px;border:1px solid var(--line);background:var(--card)}
+em{color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:var(--stepSmall);margin:1.5rem 0}
+th,td{border-bottom:1px solid var(--line);padding:.6rem .75rem;text-align:left}
+th{font-weight:650}
+code{background:#EFEFEA;padding:.1rem .3rem;border-radius:4px}
+blockquote{margin:1.5rem 0;padding:.75rem 1.25rem;border-left:3px solid var(--accent);background:var(--card)}
+
+/* "Try the interactive demo →": a button look for the strong link in an intro. */
+.intro strong > a{display:inline-block;margin-top:.5rem;padding:.7rem 1.4rem;border-radius:999px;
+  background:var(--accent);color:#FFF;text-decoration:none}
+.intro strong > a:hover{background:#9A3412}   /* one shade darker on hover */
+
+/* 8. Crater demo: square canvas that shrinks on phones; buttons match the accent. */
+.demo canvas{width:100%;max-width:500px;aspect-ratio:1;display:block;border:1px solid var(--line);border-radius:12px;background:#000;cursor:crosshair}
+.demo input[type=number]{width:6rem}
+.demo .note{color:var(--muted);font-size:var(--stepSmall)}
+button{font:inherit;padding:.4rem 1rem;border-radius:999px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+button:hover{background:var(--accent);color:#FFF}
+
+/* 9. Motion: one gentle fade-in, switched off for people who ask for less motion. */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero,.intro,.block{animation:fadeUp .6s ease-out both}
+@media (prefers-reduced-motion:reduce){
+  .hero,.intro,.block,.card{animation:none;transition:none}
+  .card:hover{transform:none}
+}
+
+/* 10. Rust pill button (Download resume). Same look as the demo link button. */
+.button{display:inline-block;padding:.7rem 1.4rem;border-radius:999px;background:var(--accent);color:#FFF;text-decoration:none;font-weight:600}
+.button:hover{background:#9A3412}
+/* Hero with no photo yet: one column, text kept at reading width. */
+.heroTextOnly{grid-template-columns:1fr}
+.heroTextOnly .heroText{max-width:820px}
+
+/* 11. Line-of-sight demo: white canvas you can drag, rust sliders, labels stacked. */
+.losDemo canvas{max-width:520px;background:var(--card);cursor:grab;touch-action:none}
+.losDemo label{display:block;margin:.25rem 0}
+.losDemo input[type=range]{width:220px;max-width:55%;vertical-align:middle}
+input[type=range],input[type=checkbox]{accent-color:var(--accent)}   /* rust slider and checkbox color */
+.losDemo #readout{font-variant-numeric:tabular-nums}
+.losDemo .note{color:var(--muted);font-size:var(--stepSmall)}

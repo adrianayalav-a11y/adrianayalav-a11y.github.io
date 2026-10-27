@@ -16,6 +16,24 @@ def page(title, body, depth):
 <footer>&copy; 2026 Adrian Ayala &middot; <a href="https://www.linkedin.com/in/adrian-ayala-32077923b">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
 </body></html>"""
 
+def wrapSections(html, rel, depth):
+    """Layout only, no wording changes: split the page at each <h2> into its own <section>
+    (one idea per section). The part before the first <h2> becomes the 'intro'.
+    On the home page the intro becomes a hero: text on one side, the crater map on the other."""
+    up = "../" * depth
+    parts = re.split(r"(?=<h2>)", html)
+    intro, rest = parts[0], parts[1:]
+    if str(rel) == "index.html":
+        # Profile photo goes beside the text only if the file exists; otherwise the hero is text-only.
+        photo = ROOT/"assets/img/headshot.jpg"
+        heroImage = (f'<img class="heroImage" src="{up}assets/img/headshot.jpg" alt="Adrian Ayala">'
+                     if photo.exists() else "")
+        heroClass = "hero" if heroImage else "hero heroTextOnly"
+        intro = f'<section class="{heroClass}"><div class="heroText">{intro}</div>{heroImage}</section>'
+    else:
+        intro = f'<section class="intro">{intro}</section>'
+    return intro + "".join(f'<section class="block">{part}</section>' for part in rest)
+
 for md in sorted((ROOT/"content").rglob("*.md")):
     rel = md.relative_to(ROOT/"content").with_suffix(".html")
     out = ROOT/rel; out.parent.mkdir(parents=True, exist_ok=True)
@@ -33,5 +51,9 @@ for md in sorted((ROOT/"content").rglob("*.md")):
     text = "\n".join(fixed)
     title = re.search(r"^# (.+)$", text, re.M).group(1)
     html = markdown.markdown(text, extensions=["tables"])
+    # Resume button shows only if assets/resume.pdf exists when you run the build
+    if not (ROOT/"assets/resume.pdf").exists():
+        html = re.sub(r'<p><a class="button" href="[./]*assets/resume.pdf">Download resume</a></p>\s*', "", html)
+    html = wrapSections(html, rel, len(rel.parts)-1)
     out.write_text(page(title, html, len(rel.parts)-1))
     print("built", rel)
