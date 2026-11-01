@@ -13,7 +13,7 @@ def page(title, body, depth):
 <link rel="stylesheet" href="{up}assets/css/style.css"></head>
 <body><header><a class="brand" href="{up}index.html">Adrian Ayala</a><nav>{nav}</nav></header>
 <main>{body}</main>
-<footer>&copy; 2026 Adrian Ayala &middot; <a href="https://www.linkedin.com/in/adrian-ayala-32077923b">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
+<footer>&copy; 2026 Adrian Ayala &middot; <a href="https://www.linkedin.com/in/adrian-ayala-v">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
 </body></html>"""
 
 def wrapSections(html, rel, depth):
