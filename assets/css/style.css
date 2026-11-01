@@ -20,7 +20,7 @@
   --step3:clamp(2.5rem,6vw,4.5rem); /* big page title, shrinks on phones */
   --wide:1200px;      /* widest layout (hero, cards) */
   --narrow:720px;     /* comfortable reading width for write-ups */
-  --space:clamp(3rem,8vw,6rem); /* vertical gap between sections */
+  --space:clamp(2rem,5vw,3.5rem); /* vertical gap between sections */
 }
 
 /* 2. Base text. System fonts only, so the browser makes no outside font requests. */
@@ -123,3 +123,9 @@ button:hover{background:var(--accent);color:#FFF}
 input[type=range],input[type=checkbox]{accent-color:var(--accent)}   /* rust slider and checkbox color */
 .losDemo #readout{font-variant-numeric:tabular-nums}
 .losDemo .note{color:var(--muted);font-size:var(--stepSmall)}
+
+/* About page: tighter gaps between sections so the next part is always in view */
+body.about .block{padding-top:clamp(1.5rem,3vw,2.25rem)}
+body.about .intro{padding-bottom:0}
+body.about h2{margin-bottom:.75rem}
+body.about ul{margin-top:.25rem}

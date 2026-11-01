@@ -3,7 +3,7 @@ import markdown, pathlib, re
 ROOT = pathlib.Path(__file__).parent
 NAV = [("Home","index.html"),("About","about.html"),("Projects","projects/index.html"),("Contact","contact.html")]
 
-def page(title, body, depth):
+def page(title, body, depth, bodyClass=""):
     up = "../" * depth
     nav = "".join(f'<a href="{up}{h}">{n}</a>' for n, h in NAV)
     return f"""<!DOCTYPE html>
@@ -11,7 +11,7 @@ def page(title, body, depth):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Adrian Ayala</title>
 <link rel="stylesheet" href="{up}assets/css/style.css"></head>
-<body><header><a class="brand" href="{up}index.html">Adrian Ayala</a><nav>{nav}</nav></header>
+<body class="{bodyClass}"><header><a class="brand" href="{up}index.html">Adrian Ayala</a><nav>{nav}</nav></header>
 <main>{body}</main>
 <footer>&copy; 2026 Adrian Ayala &middot; <a href="https://www.linkedin.com/in/adrian-ayala-v">LinkedIn</a> &middot; Built with plain HTML/CSS, hosted on GitHub Pages</footer>
 </body></html>"""
@@ -53,7 +53,17 @@ for md in sorted((ROOT/"content").rglob("*.md")):
     html = markdown.markdown(text, extensions=["tables"])
     # Resume button shows only if assets/resume.pdf exists when you run the build
     if not (ROOT/"assets/resume.pdf").exists():
-        html = re.sub(r'<p><a class="button" href="[./]*assets/resume.pdf">Download resume</a></p>\s*', "", html)
+        html = re.sub(r'<p><a class="button" href="[./]*assets/resume.pdf">Resume</a></p>\s*', "", html)
     html = wrapSections(html, rel, len(rel.parts)-1)
-    out.write_text(page(title, html, len(rel.parts)-1))
+    full = page(title, html, len(rel.parts)-1, rel.stem if len(rel.parts)==1 else "")
+    # Outside links (http(s), the resume PDF, docs) open in a new tab so visitors keep the site open
+    def newTab(m):
+        tag = m.group(0)
+        href = m.group(1)
+        if "target=" in tag: return tag
+        if re.match(r"https?://", href) or href.endswith(".pdf"):
+            return tag[:-1] + ' target="_blank" rel="noopener noreferrer">'
+        return tag
+    full = re.sub(r'<a\b[^>]*href="([^"]+)"[^>]*>', newTab, full)
+    out.write_text(full)
     print("built", rel)

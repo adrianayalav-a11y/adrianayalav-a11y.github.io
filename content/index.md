@@ -6,7 +6,7 @@ I'm a CU Boulder graduate (B.S. Astrophysical & Planetary Science, Quantum Engin
 
 [More about me →](about.html)
 
-<p><a class="button" href="assets/resume.pdf">Download resume</a></p>
+<p><a class="button" href="assets/resume.pdf">Resume</a></p>
 
 ## Featured projects
 
