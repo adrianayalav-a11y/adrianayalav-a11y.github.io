@@ -12,3 +12,27 @@
 | 8 | Reference period / anisotropy details of PREM ignored | PREM velocities depend on period and are anisotropic in the upper 220 km | We only use density, which doesn't | n/a |
 | 9 | Grid cells drawn with flat faces; cell sizes vary (pentagons smallest) | Real surface is smooth | ~220 km cells look round; uneven sizes are a known property of simple geodesic subdivision | Future: grid relaxation (optional) |
 | 10 | Mass and inertia integrated numerically with thin shells (midpoint rule) | Exact integral of the polynomials | Thin shells (2000 per layer) are accurate to far better than 0.01% | n/a |
+
+
+## v2 additions
+- Hydrostatic pressure integrates inward from P(surface)=0 with 1 km radial
+  samples and trapezoidal rho*g. Density jumps are sampled, not interpolated as
+  a physical gradient. Half-km convergence is checked (<0.1 GPa central change).
+- Gravity is spherical and nonrotating, g=GM(r)/r², g(0)=0. The high-resolution
+  layer-aligned mass/inertia integration is unchanged; plotted g/P use separate
+  1 km quadrature, so small discretization differences are expected.
+- Lab shells have uniform densities; total radius is fixed at 6370 km. PREM
+  uses 6371 km. Matching mean density does not uniquely identify an interior.
+- Thickness edits clamp to the available radius; inner core is the remainder.
+  Density inputs are clamped to 0–20 g/cm³. Zero-thickness shells are permitted.
+- Dante's 1000 km cavity is vacuum, unlike the source sheet's very low-density
+  air. The two innermost slots retain pedagogical shell names, not real geology.
+- Reference errors use rounded mass 5.972e24 kg and density 5.51 g/cm³;
+  these are independent rounded targets, not a self-consistent exact radius fit.
+- Plot boundary labels use approximate depths: ICB 5150, CMB 2891, 660, 410;
+  Moho is the PREM average at 24.4 km, not the lab's 50 km crust.
+- Density supports gravity, pressure and inertia predictions. Buoyancy/isostasy
+  additionally require density contrasts and mechanical assumptions; temperature
+  and composition matter for mineral stability. L1 does not predict plate speeds.
+- Evidence text is a summary of PREM (Dziewonski & Anderson, 1981), not copied
+  student answers. No new graded coursework is performed.

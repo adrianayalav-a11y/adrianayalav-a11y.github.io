@@ -1,0 +1,26 @@
+--- GRID ---
+cells: 10242 (expected 10*f^2+2 = 10242)
+pentagons: 12, hexagons: 10230, small triangles: 20480
+cells whose neighbor count != corner count: 0
+area sum: 5.100645e+14 m^2 vs 4*pi*R^2 = 5.100645e+14 (rel err 2.45e-14)
+cell area km^2: min 22701, mean 49801, max 59994, max/min 2.643
+typical cell width ~ 223 km
+--- PREM ---
+mass: 5.97318e+24 kg vs 5.9722e+24 (0.016%)
+I/(MR^2): 0.33080 vs 0.3307 (0.030%)
+mean density: 5514.3 kg/m^3 vs 5513
+surface gravity: 9.821 m/s^2 vs 9.82
+--- GRAVITY + PRESSURE (PREM, hydrostatic) ---
+central pressure: 364.1 GPa (PREM ~364)
+CMB pressure: 135.9 GPa (PREM ~136)
+ICB pressure: 329.1 GPa (PREM ~329)
+g max: 10.69 m/s^2 at r = 3480 km (PREM ~10.7 near CMB, r=3480)
+--- 4-SHELL MODEL vs completed ERTH 2001 lab spreadsheet ---
+Dante intentionally uses vacuum; source air density gives 2.7891714494949333 g/cm³.
+step12: mean 4.0094 g/cm^3 (target 4.009375), mass 4.3409e+24 kg OK
+step3: mean 5.2887 g/cm^3 (target 5.2887497), mass 5.7261e+24 kg OK
+step4: mean 5.5498 g/cm^3 (target 5.5497566), mass 6.0087e+24 kg OK
+dante: mean 2.7892 g/cm^3 (target 2.7891672247125716), mass 3.0198e+24 kg OK
+step 1 thickness-weighted average: 5.95 (lab 5.95)
+ALL CHECKS PASS
+EXTENDED REGRESSION / CONSERVATION / CONVERGENCE CHECKS PASS

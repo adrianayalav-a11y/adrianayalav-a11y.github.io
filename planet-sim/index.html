@@ -2,19 +2,283 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Planet Sim - Level 1: What's inside?</title>
+  <!-- KaTeX for pretty formulas (CDN + auto-render on load) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+          onload="window.renderPageMath && window.renderPageMath()"></script>
   <style>
-    body { margin: 0; font-family: system-ui, sans-serif; background: #0d1117; color: #e6edf3; display: flex; height: 100vh; }
-    #globe { flex: 1; position: relative; }
-    #panel { width: 340px; padding: 14px; overflow-y: auto; background: #161b22; font-size: 13px; }
-    h1 { font-size: 17px; margin: 0 0 8px; }
-    h2 { font-size: 14px; margin: 16px 0 6px; }
-    .row { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
-    .swatch { width: 14px; height: 14px; border-radius: 2px; }
-    table { border-collapse: collapse; width: 100%; }
-    td { padding: 2px 4px; border-bottom: 1px solid #30363d; }
-    select, button { font-size: 13px; }
-    ul { padding-left: 18px; margin: 4px 0; }
+    /* Palette aligned with adrianayalav.com (portfolio_v7_mock), dark for the globe page.
+       Accent stays rust-orange so it merges cleanly into the site later. */
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --line: #30363d;
+      --accent: #C2410C;       /* portfolio rust orange */
+      --accent-soft: #f2a33a;  /* warmer heading glow on dark */
+      --accent-hover: #9A3412;
+      --card: #1c2128;
+      --ok: #7ee787;
+      --focus: #58a6ff;
+      --track: #30363d;
+      --thumb: #ffffff;
+      --narrow: 42rem;         /* readable prose width */
+      --radius: 999px;
+      --radius-sm: 10px;
+      --space: 1.35rem;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font: 15px/1.65 var(--font);
+      background: var(--bg);
+      color: var(--fg);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Desktop: globe sticky left, right column scrolls */
+    #globe { grid-row: 1 / 3; position: sticky; top: 0; height: 100vh; min-width: 0; width: 100%; overflow: hidden; background: #05070a; }
+    #globe canvas { display: block; width: 100% !important; height: 100% !important; }
+
+    #intro, #panel {
+      background: var(--panel);
+      padding: 0 1.35rem;
+      min-width: 0;
+    }
+    #intro { padding-top: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--line); }
+    #panel { padding-top: 0.25rem; padding-bottom: 2.5rem; }
+
+    /* Typography hierarchy + breathing room (Apple / Tesla inspired whitespace) */
+    h1 {
+      font-size: 1.55rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      max-width: var(--narrow);
+    }
+    h2 {
+      font-size: 1.05rem;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      font-weight: 650;
+      margin: 2rem 0 0.85rem;
+      color: var(--accent-soft);
+    }
+    h2:first-child { margin-top: 1.25rem; }
+    p {
+      line-height: 1.7;
+      margin: 0 0 1rem;
+      max-width: var(--narrow);
+      color: var(--fg);
+    }
+    p.note, .note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin: 0.5rem 0 1.15rem;
+      max-width: var(--narrow);
+    }
+    ul {
+      padding-left: 1.25rem;
+      margin: 0 0 1.15rem;
+      line-height: 1.7;
+      max-width: var(--narrow);
+    }
+    li { margin: 0.35rem 0; }
+    li + li { margin-top: 0.55rem; }
+    b, strong { font-weight: 650; }
+    .katex { font-size: 1.05em; }
+    .katex-display { margin: 0.75rem 0; overflow-x: auto; overflow-y: hidden; }
+
+    /* Control rows */
+    .controls { display: flex; flex-direction: column; gap: 0.85rem; margin: 1.1rem 0 0.4rem; }
+    .control-row {
+      display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    }
+    .control-label {
+      font-size: 0.8rem; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.04em; font-weight: 600; min-width: 3.5rem;
+    }
+
+    /* iOS-style toggle (Cutaway) */
+    .toggle {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      cursor: pointer; user-select: none; -webkit-user-select: none;
+    }
+    .toggle input {
+      position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0;
+    }
+    .toggle-track {
+      position: relative; width: 44px; height: 26px; flex: none;
+      background: var(--track); border-radius: var(--radius);
+      transition: background 0.22s ease;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .toggle-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--thumb);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+      transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track .toggle-thumb { transform: translateX(18px); }
+    .toggle input:focus-visible + .toggle-track {
+      outline: 2px solid var(--focus); outline-offset: 3px;
+    }
+    .toggle-text { font-size: 0.95rem; color: var(--fg); }
+
+    /* Styled select (kept for level list — several coming-soon options) */
+    .select-wrap { position: relative; display: inline-flex; min-width: 0; max-width: 100%; }
+    .select-wrap select {
+      appearance: none; -webkit-appearance: none;
+      font: inherit; font-size: 0.92rem;
+      color: var(--fg); background: var(--card);
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 0.55rem 2.2rem 0.55rem 0.9rem;
+      max-width: 100%; cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .select-wrap select:hover { border-color: #484f58; }
+    .select-wrap select:focus-visible {
+      outline: none; border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.25);
+    }
+    .select-wrap::after {
+      content: ""; position: absolute; right: 0.85rem; top: 50%;
+      width: 0.45rem; height: 0.45rem;
+      border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+      transform: translateY(-65%) rotate(45deg); pointer-events: none;
+    }
+
+    /* Segmented / pill control (presets) — Apple/Tesla style */
+    .seg {
+      display: inline-flex; flex-wrap: wrap; gap: 0.35rem;
+      padding: 0.3rem; background: #0d1117; border-radius: 14px;
+      border: 1px solid var(--line); max-width: 100%;
+    }
+    .seg button {
+      font: inherit; font-size: 0.82rem; font-weight: 600;
+      color: var(--muted); background: transparent;
+      border: none; border-radius: 10px;
+      padding: 0.45rem 0.75rem; cursor: pointer;
+      transition: background 0.18s, color 0.18s, transform 0.12s;
+      white-space: nowrap;
+    }
+    .seg button:hover { color: var(--fg); background: rgba(255,255,255,0.04); }
+    .seg button[aria-pressed="true"] {
+      color: #fff; background: var(--accent);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+    .seg button:focus-visible {
+      outline: 2px solid var(--focus); outline-offset: 2px;
+    }
+    .seg button:active { transform: scale(0.97); }
+
+    /* Shell table + modern inputs */
+    .row { display: flex; align-items: center; gap: 0.55rem; margin: 0.25rem 0; }
+    .swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+    td, th {
+      padding: 0.75rem 0.45rem; border-bottom: 1px solid var(--line);
+      text-align: left; font-weight: normal; vertical-align: top;
+    }
+    th { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    #shellTable td:first-child { width: 42%; }
+    #shellTable .values { margin-top: 0.45rem; line-height: 1.65; }
+    #shellTable .shell-name { font-weight: 650; }
+
+    input[type=number] {
+      width: 4.5rem; font: inherit; font-size: 0.9rem;
+      background: var(--bg); color: var(--fg);
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 0.35rem 0.45rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input[type=number]:focus-visible {
+      outline: none; border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.22);
+    }
+
+    /* Nice range slider (rust thumb) */
+    input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; max-width: 220px; height: 6px;
+      background: var(--track); border-radius: var(--radius);
+      outline: none; margin: 0.45rem 0 0.55rem;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.35); cursor: pointer;
+      transition: transform 0.12s;
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.35); cursor: pointer;
+    }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.08); }
+    input[type=range]:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 4px; }
+    input[type=range]:disabled { opacity: 0.4; }
+
+    .field-label {
+      display: inline-block; font-size: 0.78rem; color: var(--muted);
+      margin-right: 0.35rem; letter-spacing: 0.02em;
+    }
+    .shell-controls { display: flex; flex-direction: column; gap: 0.15rem; }
+
+    canvas.plot { width: 100%; max-width: 368px; display: block; margin: 0.25rem 0 0.5rem; border-radius: 8px; }
+    .bar {
+      display: flex; height: 20px; border-radius: 8px; overflow: hidden;
+      margin: 0.25rem 0 0.85rem; background: #0d1117;
+    }
+    .bar div {
+      font-size: 10px; color: #000; text-align: center; line-height: 20px;
+      overflow: hidden; white-space: nowrap; font-weight: 650;
+    }
+    .bar-label { font-size: 0.85rem; color: var(--muted); margin: 0.6rem 0 0.2rem; }
+    #shellResult { margin: 0.85rem 0 0.5rem; line-height: 1.65; max-width: var(--narrow); }
+    #shellResult b { color: var(--ok); }
+    #shellResult p { margin: 0.4rem 0; }
+
+    #hover {
+      position: fixed; pointer-events: none; z-index: 5;
+      background: rgba(13,17,23,0.94); border: 1px solid var(--line);
+      padding: 0.55rem 0.7rem; border-radius: 10px; font-size: 0.82rem;
+      display: none; line-height: 1.45; max-width: 260px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .toggle-track, .toggle-thumb, .seg button, input[type=range]::-webkit-slider-thumb {
+        transition: none;
+      }
+    }
+
+    /* Phones: intro → globe → panel; no horizontal overflow */
+    @media (max-width: 800px) {
+      body { grid-template-columns: minmax(0, 1fr); }
+      #intro { grid-row: 1; padding-top: 1.15rem; }
+      #globe { grid-row: 2; position: relative; height: 58vh; min-height: 280px; }
+      #panel { grid-row: 3; }
+      h1 { font-size: 1.3rem; }
+      h2 { margin-top: 1.65rem; }
+      input[type=range] { max-width: 160px; }
+      .seg button { font-size: 0.78rem; padding: 0.4rem 0.6rem; }
+    }
   </style>
   <script type="importmap">
     { "imports": {
@@ -24,30 +288,124 @@
   </script>
 </head>
 <body>
-  <div id="globe"></div>
-  <div id="panel">
-    <h1>Planet Sim</h1>
-    <div class="row">
-      <select id="levelSelect"></select>
+  <div id="intro">
+    <h1>Planet Sim: building Earth one level at a time</h1>
+    <p>This is my personal project: a simplified model of how a planet like Earth is put together, using real Earth
+      numbers. Each level adds one new piece of physics and answers one question. <b>Level 1 asks: what's inside?</b>
+      AI used: built with an AI coding agent. It fills the globe with the standard model of Earth's interior (PREM) and checks it against Earth's real mass,
+      gravity and moment of inertia.</p>
+    <p class="note">How to use it: drag to spin the globe and scroll to zoom. Flip the <i>Cutaway</i> switch to slice it open, then
+      hover over the slice to read the depth and density. Below, try building your own 4-shell Earth.</p>
+
+    <div class="controls">
+      <div class="control-row">
+        <span class="control-label" id="levelLabel">Level</span>
+        <div class="select-wrap">
+          <select id="levelSelect" aria-labelledby="levelLabel"></select>
+        </div>
+      </div>
+      <div class="control-row">
+        <label class="toggle" for="sliceToggle">
+          <input type="checkbox" id="sliceToggle" role="switch" aria-checked="false">
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">Cutaway: show the inside</span>
+        </label>
+      </div>
     </div>
-    <div class="row"><label><input type="checkbox" id="sliceToggle"> Cutaway: show the inside</label></div>
+  </div>
+
+  <div id="globe"></div>
+
+  <div id="panel">
     <h2>Checks (computed live)</h2>
     <table id="checks"></table>
+
     <h2>Layers (PREM density)</h2>
     <div id="legend"></div>
+
     <h2>Density vs radius</h2>
-    <canvas id="plot" width="310" height="200"></canvas>
+    <canvas id="plotDensity" class="plot" width="368" height="210"></canvas>
+    <p class="note">Orange: PREM. Dashed blue: your 4-shell model (below). Grey lines: seismic boundaries
+      (depths in km).</p>
+
+    <h2>Gravity \(g(r)\)</h2>
+    <canvas id="plotGravity" class="plot" width="368" height="170"></canvas>
+    <p class="note" id="gravityNote"></p>
+
+    <h2>Pressure \(P(r)\)</h2>
+    <canvas id="plotPressure" class="plot" width="368" height="170"></canvas>
+    <p class="note" id="pressureNote"></p>
+
+    <h2>Build your own Earth (4 shells)</h2>
+    <p class="note">Based on my ERTH 2001 lab (CU Boulder). Each shell has one density. The radius is fixed at
+      \(6370\,\mathrm{km}\), so the inner core takes whatever thickness is left.</p>
+
+    <div class="control-row" style="margin: 0.85rem 0 1rem;">
+      <span class="control-label" id="presetLabel">Preset</span>
+      <div class="seg" id="presetSeg" role="radiogroup" aria-labelledby="presetLabel"></div>
+      <!-- Hidden select kept in sync so existing JS hooks still work if needed -->
+      <select id="presetSelect" hidden aria-hidden="true" tabindex="-1"></select>
+    </div>
+
+    <table id="shellTable"></table>
+    <div id="shellResult"></div>
+    <div class="bar-label">Share of volume</div><div class="bar" id="volumeBar"></div>
+    <div class="bar-label">Share of mass</div><div class="bar" id="massBar"></div>
+    <p class="note" id="shellExplain"></p>
+
+    <h2>How we know</h2>
+    <p>No one has drilled deeper than about \(12\,\mathrm{km}\), so the inside is measured indirectly. Earthquakes send seismic
+      waves through the planet. Their travel times to stations around the world give wave speeds at each depth, and
+      sudden jumps show where layers meet. S waves do not travel through the liquid outer core; together with P-wave refraction, this helps reveal its boundary. The density has to fit
+      those speeds, and also add up to Earth's total mass (known from gravity and orbits) and its moment of inertia
+      (known from how Earth's spin axis precesses). PREM (Dziewonski &amp; Anderson, 1981) is the model that fits all of
+      these at once.</p>
+
+    <h2>Why start with density?</h2>
+    <p>Once we know how mass is arranged inside, a lot follows from it:</p>
+    <ul>
+      <li><b>Gravity at every depth</b>, from the mass below you (the \(g\) plot above):
+        \(g(r) = G M(r) / r^{2}\).</li>
+      <li><b>Pressure</b>, from the weight of the rock above you:
+        \(\mathrm{d}P/\mathrm{d}r = -\rho g\), with \(P = 0\) at the surface.
+        Pressure and temperature together determine which minerals are stable,
+        for example the \(410\) and \(660\,\mathrm{km}\) boundaries are mineral phase changes.</li>
+      <li><b>Moment of inertia</b>: a planet with its mass packed toward the center spins and wobbles differently
+        (\(I / MR^{2}\) is smaller when mass is central).</li>
+      <li><b>Buoyancy</b>: density contrasts create buoyancy (density alone does not predict motion). In Level 2, rigid plates ride on the mantle. In Level 3,
+        isostasy explains why oceans sit low and continents stand high.</li>
+    </ul>
+    <p>So density is the foundation. Every later level builds on this one.</p>
+
     <h2>What Level 1 assumes</h2>
     <ul>
-      <li>Perfect sphere (real Earth is flattened ~1/298 by spin).</li>
+      <li>Perfect sphere (real Earth is flattened \(\sim 1/298\) by spin).</li>
       <li>Density depends only on radius (PREM is a 1D average; real Earth has slabs, plumes, continents).</li>
       <li>Same radial profile under every hex cell.</li>
       <li>Static snapshot: nothing moves or evolves.</li>
-      <li>Gravity from the shell theorem, g = G M(r) / r².</li>
-      <li>Hex cells drawn with flat faces (fine at ~220 km cell size).</li>
+      <li>Gravity from the shell theorem, \(g = G M(r) / r^{2}\).</li>
+      <li>Pressure is hydrostatic: \(\mathrm{d}P/\mathrm{d}r = -\rho g\), \(P = 0\) at the surface.</li>
+      <li>The 4-shell model uses uniform shells.</li>
+      <li>Hex cells drawn with flat faces (fine at \(\sim 220\,\mathrm{km}\) cell size).</li>
     </ul>
-    <p>Full list: ASSUMPTIONS.md</p>
+    <p class="note">Full list: ASSUMPTIONS.md</p>
   </div>
+  <div id="hover"></div>
+  <script>
+    // Render any \( ... \) / \[ ... \] on the page; also re-run after dynamic panel updates.
+    window.renderPageMath = function (root) {
+      if (typeof renderMathInElement !== 'function') return;
+      renderMathInElement(root || document.body, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '\\[', right: '\\]', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false }
+        ],
+        throwOnError: false
+      });
+    };
+  </script>
   <script type="module" src="viz/main.js"></script>
 </body>
 </html>

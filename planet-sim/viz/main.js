@@ -1,9 +1,10 @@
+import { initUpgrade } from './upgrade.js';
 // main.js - wires the shared state, the levels, and the 3D view together.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createPlanet } from '../state/planet.js';
 import { levels, applyLevel } from '../levels/levels.js';
-import { premDensity } from '../modules/radialStructure.js';
+import { premDensity, premLayerName } from '../modules/radialStructure.js';
 
 const config = await (await fetch('config/earth.json')).json();
 const planet = createPlanet(config);
@@ -31,11 +32,11 @@ function densityColor(rho) {
 // ---------- scene ----------
 const container = document.getElementById('globe');
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-renderer.setSize(container.clientWidth, window.innerHeight);
+renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.localClippingEnabled = true;
 container.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(40, container.clientWidth / window.innerHeight, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
 camera.position.set(2.2, 1.2, 2.6);
 const controls = new OrbitControls(camera, renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff, 0.55));
@@ -69,15 +70,6 @@ lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePosit
 lineGeometry.scale(1.0005, 1.0005, 1.0005); // sit just above the faces
 const cellLines = new THREE.LineSegments(lineGeometry, new THREE.LineBasicMaterial({ color: 0x0b1a2e, transparent: true, opacity: 0.6, clippingPlanes: [] }));
 scene.add(cellLines);
-// Mark the 12 pentagons so visitors can find them.
-const pentagonMarkers = new THREE.Group();
-planet.grid.cells.filter((c) => c.isPentagon).forEach((c) => {
-  const dot = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffd400 }));
-  dot.position.set(...c.center).multiplyScalar(1.003);
-  pentagonMarkers.add(dot);
-});
-scene.add(pentagonMarkers);
-
 // ---------- interior slice: a disc in the x = 0 plane colored by PREM density ----------
 function makeSliceTexture() {
   const size = 512, canvas = document.createElement('canvas');
@@ -103,24 +95,39 @@ slice.rotation.y = Math.PI / 2; // face along x
 slice.visible = false;
 scene.add(slice);
 
-document.getElementById('sliceToggle').addEventListener('change', (e) => setCutaway(e.target.checked));
+const sliceToggle = document.getElementById('sliceToggle');
+sliceToggle.addEventListener('change', (e) => setCutaway(e.target.checked));
 function setCutaway(on) {
   const planes = on ? [cutPlane] : [];
   cellMesh.material.clippingPlanes = planes;
   cellLines.material.clippingPlanes = planes;
-  pentagonMarkers.visible = !on;
   slice.visible = on;
+  // Keep the switch's ARIA state in sync (iOS-style toggle).
+  sliceToggle.checked = on;
+  sliceToggle.setAttribute('aria-checked', on ? 'true' : 'false');
 }
 
 // ---------- side panel: checks, legend, plot ----------
 const r = planet.radial, ref = config.reference;
-const areaSum = planet.grid.cells.reduce((s, c) => s + c.areaSr, 0);
+// Pretty scientific notation for KaTeX: 5.10 \times 10^{8}
+function sciTex(n, digits = 2) {
+  if (!Number.isFinite(n)) return String(n);
+  if (n === 0) return '0';
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(n);
+  const exp = Math.floor(Math.log10(abs));
+  const mant = abs / 10 ** exp;
+  return `${sign}${mant.toFixed(digits)} \\times 10^{${exp}}`;
+}
+// Grid areas are steradians on the unit sphere; × R_PREM² → km².
+const Rkm = config.radiusKm; // 6371 km (PREM)
+const areaKm2 = planet.grid.cells.reduce((s, c) => s + c.areaSr, 0) * Rkm * Rkm;
+const areaExactKm2 = 4 * Math.PI * Rkm * Rkm;
 const rows = [
-  ['Cells', planet.grid.cells.length.toLocaleString(), '10*32²+2'],
-  ['Pentagons', planet.grid.cells.filter((c) => c.isPentagon).length, '12'],
-  ['Area / 4πR²', (areaSum / (4 * Math.PI)).toFixed(9), '1'],
+  ['Surface area', `\\(A = ${sciTex(areaKm2)}\\,\\mathrm{km^{2}}\\)`, `\\(A = ${sciTex(areaExactKm2)}\\,\\mathrm{km^{2}}\\)`],
   ['Mass (kg)', r.massKg.toExponential(4), ref.massKg.toExponential(4)],
-  ['I/(MR²)', r.momentOfInertiaFactor.toFixed(4), ref.momentOfInertiaFactor],
+  ['\\(I/(MR^{2})\\)', r.momentOfInertiaFactor.toFixed(4), ref.momentOfInertiaFactor],
+  ['Mean density', r.meanDensity.toFixed(1) + ' kg/m³', ref.meanDensityKgM3],
   ['Surface g', r.surfaceGravity.toFixed(2) + ' m/s²', ref.surfaceGravityMs2],
 ];
 document.getElementById('checks').innerHTML = '<tr><td></td><td><b>model</b></td><td><b>real</b></td></tr>'
@@ -132,33 +139,23 @@ document.getElementById('legend').innerHTML = legendLayers.map(([name, rKm]) => 
   const rho = premDensity(rKm, config);
   return `<div class="row"><span class="swatch" style="background:#${densityColor(rho).getHexString()}"></span>${name} (~${(rho / 1000).toFixed(1)} g/cm³)</div>`;
 }).join('');
+if (window.renderPageMath) window.renderPageMath(document.getElementById('checks'));
 
-function drawPlot() {
-  const canvas = document.getElementById('plot'), ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height, pad = 30;
-  const toX = (rKm) => pad + (rKm / config.radiusKm) * (W - pad - 8);
-  const toY = (rho) => H - pad - (rho / 14000) * (H - pad - 8);
-  ctx.fillStyle = '#0d1117'; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = '#8b949e'; ctx.fillStyle = '#8b949e'; ctx.font = '10px sans-serif';
-  ctx.beginPath(); ctx.moveTo(pad, 8); ctx.lineTo(pad, H - pad); ctx.lineTo(W - 8, H - pad); ctx.stroke();
-  ctx.fillText('radius (km)', W / 2 - 25, H - 6);
-  [0, 2000, 4000, 6000].forEach((x) => ctx.fillText(x, toX(x) - 8, H - pad + 12));
-  [0, 5, 10].forEach((g) => ctx.fillText(g, 10, toY(g * 1000) + 3));
-  ctx.save(); ctx.translate(9, H / 2 + 20); ctx.rotate(-Math.PI / 2); ctx.fillText('g/cm³', 0, 0); ctx.restore();
-  ctx.strokeStyle = '#f2a33a'; ctx.lineWidth = 2; ctx.beginPath();
-  for (let rKm = 0; rKm <= config.radiusKm; rKm += 5) {
-    const y = toY(premDensity(rKm, config));
-    rKm === 0 ? ctx.moveTo(toX(rKm), y) : ctx.lineTo(toX(rKm), y);
-  }
-  ctx.stroke();
-}
-drawPlot();
+initUpgrade(planet, config, slice, camera, renderer, THREE);
 
-window.addEventListener('resize', () => {
-  camera.aspect = container.clientWidth / window.innerHeight;
+function resizeGlobe() {
+  const w = container.clientWidth, h = container.clientHeight;
+  if (w < 2 || h < 2) return;
+  camera.aspect = w / h;
+  // Wider FOV on phones so the whole sphere fits in a tall narrow frame
+  camera.fov = w < 520 ? 58 : 40;
   camera.updateProjectionMatrix();
-  renderer.setSize(container.clientWidth, window.innerHeight);
-});
+  // false = don't write fixed CSS size onto the canvas; CSS keeps it fluid for phones
+  renderer.setSize(w, h, false);
+}
+window.addEventListener('resize', resizeGlobe);
+if (window.ResizeObserver) new ResizeObserver(resizeGlobe).observe(container);
+resizeGlobe();
 
 // ---------- render loop ----------
 window.setCutaway = setCutaway; // handy for screenshots/tests

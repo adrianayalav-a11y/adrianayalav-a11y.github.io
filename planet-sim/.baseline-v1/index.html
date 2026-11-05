@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Planet Sim - Level 1: What's inside?</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0d1117; color: #e6edf3; display: flex; height: 100vh; }
+    #globe { flex: 1; position: relative; }
+    #panel { width: 340px; padding: 14px; overflow-y: auto; background: #161b22; font-size: 13px; }
+    h1 { font-size: 17px; margin: 0 0 8px; }
+    h2 { font-size: 14px; margin: 16px 0 6px; }
+    .row { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
+    .swatch { width: 14px; height: 14px; border-radius: 2px; }
+    table { border-collapse: collapse; width: 100%; }
+    td { padding: 2px 4px; border-bottom: 1px solid #30363d; }
+    select, button { font-size: 13px; }
+    ul { padding-left: 18px; margin: 4px 0; }
+  </style>
+  <script type="importmap">
+    { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    } }
+  </script>
+</head>
+<body>
+  <div id="globe"></div>
+  <div id="panel">
+    <h1>Planet Sim</h1>
+    <div class="row">
+      <select id="levelSelect"></select>
+    </div>
+    <div class="row"><label><input type="checkbox" id="sliceToggle"> Cutaway: show the inside</label></div>
+    <h2>Checks (computed live)</h2>
+    <table id="checks"></table>
+    <h2>Layers (PREM density)</h2>
+    <div id="legend"></div>
+    <h2>Density vs radius</h2>
+    <canvas id="plot" width="310" height="200"></canvas>
+    <h2>What Level 1 assumes</h2>
+    <ul>
+      <li>Perfect sphere (real Earth is flattened ~1/298 by spin).</li>
+      <li>Density depends only on radius (PREM is a 1D average; real Earth has slabs, plumes, continents).</li>
+      <li>Same radial profile under every hex cell.</li>
+      <li>Static snapshot: nothing moves or evolves.</li>
+      <li>Gravity from the shell theorem, g = G M(r) / r².</li>
+      <li>Hex cells drawn with flat faces (fine at ~220 km cell size).</li>
+    </ul>
+    <p>Full list: ASSUMPTIONS.md</p>
+  </div>
+  <script type="module" src="viz/main.js"></script>
+</body>
+</html>
